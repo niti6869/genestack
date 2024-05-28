@@ -730,7 +730,7 @@ manifests:
   job_ks_endpoints: true
   job_ks_service: true
   job_ks_user: true
-  job_rabbit_init: true
+  job_rabbit_init: false
   pdb_api: true
   pdb_producer: true
   pdb_central: true
