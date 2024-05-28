@@ -465,10 +465,12 @@ conf:
     storage:sqlalchemy:
       max_retries: -1
     keystone_authtoken:
-      auth_version: v3
+      service_token_roles: service
+      service_token_roles_required: true
       auth_type: password
+      auth_version: v3
       memcache_security_strategy: ENCRYPT
-      service_type: dns
+      service_type: image
   logging:
     loggers:
       keys:
