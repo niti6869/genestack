@@ -651,11 +651,11 @@ endpoints:
       admin:
         username: root
         password: password
-      designate:
-        username: designate
-        password: password
+        secret:
+          tls:
+            internal: mariadb-tls-direct
     hosts:
-      default: mariadb
+      default: mariadb-galera-primary
     host_fqdn_override:
       default: null
     path: /designate
