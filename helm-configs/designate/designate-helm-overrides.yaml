@@ -690,7 +690,7 @@ endpoints:
             internal: rabbitmq-tls-direct
       designate:
         username: designate
-        password: password    
+        password: password
     statefulset:
       replicas: 3
       name: rabbitmq-server
