@@ -688,7 +688,7 @@ endpoints:
         secret:
           tls:
             internal: rabbitmq-tls-direct
-       designate:
+      designate:
         username: designate
         password: password           
     statefulset:
