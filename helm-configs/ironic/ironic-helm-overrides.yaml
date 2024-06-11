@@ -18,8 +18,6 @@
 ---
 release_group: null
 
-helm3_hook: true
-
 labels:
   api:
     node_selector_key: openstack-control-plane
@@ -463,9 +461,9 @@ endpoints:
       admin:
         username: root
         password: password
-        secret:
-          tls:
-            internal: mariadb-tls-direct
+      secret:
+        tls:
+          internal: mariadb-tls-direct
     hosts:
       default: mariadb-cluster-primary
     host_fqdn_override:
@@ -495,9 +493,9 @@ endpoints:
       admin:
         username: rabbitmq
         password: password
-        secret:
-          tls:
-            internal: rabbitmq-tls-direct
+      secret:
+        tls:
+          internal: rabbitmq-tls-direct
     statefulset:
       replicas: 3
       name: rabbitmq-server
@@ -718,7 +716,7 @@ manifests:
   ingress_api: true
   job_bootstrap: true
   job_db_drop: false
-  job_db_init: true
+  job_db_init: false
   job_db_sync: true
   job_image_repo_sync: true
   job_ks_endpoints: true
