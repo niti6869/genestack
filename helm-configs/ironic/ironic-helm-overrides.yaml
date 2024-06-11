@@ -352,6 +352,12 @@ secrets:
     ironic: ironic-rabbitmq-user
   oci_image_registry:
     ironic: ironic-oci-image-registry
+  tls:
+    baremetal:
+      api:
+        public: ironic-tls-public
+        internal: ironic-tls-api
+        
 
 # typically overridden by environmental
 # values, but should include all endpoints
@@ -422,8 +428,10 @@ endpoints:
       default: http
     port:
       api:
-        default: 80
+        default: 5000
+        public: 80
         internal: 5000
+        service: 5000
   baremetal:
     name: ironic
     hosts:
@@ -432,13 +440,15 @@ endpoints:
     host_fqdn_override:
       default: null
     path:
-      default: null
+      default: /
     scheme:
       default: http
     port:
       api:
         default: 6385
         public: 80
+        internal: 6385
+        service: 6385        
       pxe_http:
         default: 8080
   image:
@@ -456,14 +466,16 @@ endpoints:
       api:
         default: 9292
         public: 80
+        internal: 9292
+        service: 9292
   oslo_db:
     auth:
       admin:
         username: root
         password: password
-      secret:
-        tls:
-          internal: mariadb-tls-direct
+        secret:
+          tls:
+            internal: mariadb-tls-direct
     hosts:
       default: mariadb-cluster-primary
     host_fqdn_override:
@@ -493,9 +505,12 @@ endpoints:
       admin:
         username: rabbitmq
         password: password
-      secret:
-        tls:
-          internal: rabbitmq-tls-direct
+        secret:
+          tls:
+            internal: rabbitmq-tls-direct
+      ironic:
+        username: ironic
+        password: password            
     statefulset:
       replicas: 3
       name: rabbitmq-server
@@ -525,6 +540,8 @@ endpoints:
       api:
         default: 9696
         public: 80
+        internal: 9696
+        service: 9696      
   object_store:
     name: swift
     namespace: ceph
@@ -557,6 +574,28 @@ endpoints:
         default: 24224
       metrics:
         default: 24220
+  kube_dns:
+    namespace: kube-system
+    name: kubernetes-dns
+    hosts:
+      default: kube-dns
+    host_fqdn_override:
+      default: null
+    path:
+      default: null
+    scheme: http
+    port:
+      dns:
+        default: 53
+        protocol: UDP
+  ingress:
+    namespace: null
+    name: ingress
+    hosts:
+      default: ingress
+    port:
+      ingress:
+        default: 80
 
 pod:
   affinity:
@@ -708,6 +747,17 @@ network_policy:
       - {}
     egress:
       - {}
+
+helm3_hook: true
+
+health_probe:
+  logging:
+    level: ERROR
+
+tls:
+  identity: false
+  oslo_messaging: false
+  oslo_db: false
 
 manifests:
   configmap_bin: true
