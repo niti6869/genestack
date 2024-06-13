@@ -18,11 +18,6 @@
 ---
 release_group: null
 
-<<<<<<< HEAD
-=======
-helm3_hook: true
-
->>>>>>> 9d67637 (adding ironic)
 labels:
   api:
     node_selector_key: openstack-control-plane
@@ -357,15 +352,13 @@ secrets:
     ironic: ironic-rabbitmq-user
   oci_image_registry:
     ironic: ironic-oci-image-registry
-<<<<<<< HEAD
   tls:
     baremetal:
       api:
         public: ironic-tls-public
         internal: ironic-tls-api
         
-=======
->>>>>>> 9d67637 (adding ironic)
+
 
 # typically overridden by environmental
 # values, but should include all endpoints
@@ -436,15 +429,11 @@ endpoints:
       default: http
     port:
       api:
-<<<<<<< HEAD
         default: 5000
         public: 80
         internal: 5000
         service: 5000
-=======
-        default: 80
-        internal: 5000
->>>>>>> 9d67637 (adding ironic)
+
   baremetal:
     name: ironic
     hosts:
@@ -453,22 +442,17 @@ endpoints:
     host_fqdn_override:
       default: null
     path:
-<<<<<<< HEAD
       default: /
-=======
-      default: null
->>>>>>> 9d67637 (adding ironic)
+
     scheme:
       default: http
     port:
       api:
         default: 6385
         public: 80
-<<<<<<< HEAD
         internal: 6385
         service: 6385        
-=======
->>>>>>> 9d67637 (adding ironic)
+
       pxe_http:
         default: 8080
   image:
@@ -486,11 +470,9 @@ endpoints:
       api:
         default: 9292
         public: 80
-<<<<<<< HEAD
         internal: 9292
         service: 9292
-=======
->>>>>>> 9d67637 (adding ironic)
+
   oslo_db:
     auth:
       admin:
@@ -531,12 +513,10 @@ endpoints:
         secret:
           tls:
             internal: rabbitmq-tls-direct
-<<<<<<< HEAD
       ironic:
         username: ironic
         password: password            
-=======
->>>>>>> 9d67637 (adding ironic)
+
     statefulset:
       replicas: 3
       name: rabbitmq-server
@@ -566,11 +546,9 @@ endpoints:
       api:
         default: 9696
         public: 80
-<<<<<<< HEAD
         internal: 9696
         service: 9696      
-=======
->>>>>>> 9d67637 (adding ironic)
+
   object_store:
     name: swift
     namespace: ceph
@@ -603,7 +581,6 @@ endpoints:
         default: 24224
       metrics:
         default: 24220
-<<<<<<< HEAD
   kube_dns:
     namespace: kube-system
     name: kubernetes-dns
@@ -626,8 +603,7 @@ endpoints:
     port:
       ingress:
         default: 80
-=======
->>>>>>> 9d67637 (adding ironic)
+
 
 pod:
   affinity:
@@ -780,7 +756,7 @@ network_policy:
     egress:
       - {}
 
-<<<<<<< HEAD
+
 helm3_hook: true
 
 health_probe:
@@ -792,8 +768,7 @@ tls:
   oslo_messaging: false
   oslo_db: false
 
-=======
->>>>>>> 9d67637 (adding ironic)
+
 manifests:
   configmap_bin: true
   configmap_etc: true
@@ -801,11 +776,7 @@ manifests:
   ingress_api: true
   job_bootstrap: true
   job_db_drop: false
-<<<<<<< HEAD
   job_db_init: false
-=======
-  job_db_init: true
->>>>>>> 9d67637 (adding ironic)
   job_db_sync: true
   job_image_repo_sync: true
   job_ks_endpoints: true
