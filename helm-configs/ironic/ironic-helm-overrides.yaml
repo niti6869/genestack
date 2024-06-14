@@ -18,8 +18,6 @@
 ---
 release_group: null
 
-helm3_hook: true
-
 labels:
   api:
     node_selector_key: openstack-control-plane
@@ -33,22 +31,22 @@ labels:
 
 images:
   tags:
-    ironic_manage_cleaning_network: docker.io/openstackhelm/heat:wallaby-ubuntu_focal
-    ironic_retrive_cleaning_network: docker.io/openstackhelm/heat:wallaby-ubuntu_focal
-    ironic_retrive_swift_config: docker.io/openstackhelm/heat:wallaby-ubuntu_focal
+    ironic_manage_cleaning_network: docker.io/openstackhelm/heat:2024.1-ubuntu_jammy
+    ironic_retrive_cleaning_network: docker.io/openstackhelm/heat:2024.1-ubuntu_jammy
+    ironic_retrive_swift_config: docker.io/openstackhelm/heat:2024.1-ubuntu_jammy
     # Bootstrap image requires curl
-    bootstrap: docker.io/openstackhelm/heat:wallaby-ubuntu_focal
-    db_drop: docker.io/openstackhelm/heat:wallaby-ubuntu_focal
-    db_init: docker.io/openstackhelm/heat:wallaby-ubuntu_focal
-    ironic_db_sync: docker.io/openstackhelm/ironic:wallaby-ubuntu_focal
-    ks_user: docker.io/openstackhelm/heat:wallaby-ubuntu_focal
-    ks_service: docker.io/openstackhelm/heat:wallaby-ubuntu_focal
-    ks_endpoints: docker.io/openstackhelm/heat:wallaby-ubuntu_focal
+    bootstrap: docker.io/openstackhelm/heat:2024.1-ubuntu_jammy
+    db_drop: docker.io/openstackhelm/heat:2024.1-ubuntu_jammy
+    db_init: docker.io/openstackhelm/heat:2024.1-ubuntu_jammy
+    ironic_db_sync: docker.io/openstackhelm/ironic:2024.1-ubuntu_jammy
+    ks_user: docker.io/openstackhelm/heat:2024.1-ubuntu_jammy
+    ks_service: docker.io/openstackhelm/heat:2024.1-ubuntu_jammy
+    ks_endpoints: docker.io/openstackhelm/heat:2024.1-ubuntu_jammy
     rabbit_init: docker.io/rabbitmq:3.7-management
-    ironic_api: docker.io/openstackhelm/ironic:wallaby-ubuntu_focal
-    ironic_conductor: docker.io/openstackhelm/ironic:wallaby-ubuntu_focal
-    ironic_pxe: docker.io/openstackhelm/ironic:wallaby-ubuntu_focal
-    ironic_pxe_init: docker.io/openstackhelm/ironic:wallaby-ubuntu_focal
+    ironic_api: docker.io/openstackhelm/ironic:2024.1-ubuntu_jammy
+    ironic_conductor: docker.io/openstackhelm/ironic:2024.1-ubuntu_jammy
+    ironic_pxe: docker.io/openstackhelm/ironic:2024.1-ubuntu_jammy
+    ironic_pxe_init: docker.io/openstackhelm/ironic:2024.1-ubuntu_jammy
     ironic_pxe_http: docker.io/nginx:1.13.3
     dep_check: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
     image_repo_sync: docker.io/docker:17.07.0
@@ -234,11 +232,11 @@ bootstrap:
     source_base: http://tarballs.openstack.org/ironic-python-agent/tinyipa/files
     structured:
       ironic-agent.initramfs:
-        source: tinyipa-stable-wallaby.gz
+        source: tinyipa-stable-2024.1.gz
         disk_format: ari
         container_format: ari
       ironic-agent.kernel:
-        source: tinyipa-stable-wallaby.vmlinuz
+        source: tinyipa-stable-2024.1.vmlinuz
         disk_format: aki
         container_format: aki
   network:
@@ -354,6 +352,13 @@ secrets:
     ironic: ironic-rabbitmq-user
   oci_image_registry:
     ironic: ironic-oci-image-registry
+  tls:
+    baremetal:
+      api:
+        public: ironic-tls-public
+        internal: ironic-tls-api
+        
+
 
 # typically overridden by environmental
 # values, but should include all endpoints
@@ -424,8 +429,11 @@ endpoints:
       default: http
     port:
       api:
-        default: 80
+        default: 5000
+        public: 80
         internal: 5000
+        service: 5000
+
   baremetal:
     name: ironic
     hosts:
@@ -434,13 +442,17 @@ endpoints:
     host_fqdn_override:
       default: null
     path:
-      default: null
+      default: /
+
     scheme:
       default: http
     port:
       api:
         default: 6385
         public: 80
+        internal: 6385
+        service: 6385        
+
       pxe_http:
         default: 8080
   image:
@@ -458,16 +470,19 @@ endpoints:
       api:
         default: 9292
         public: 80
+        internal: 9292
+        service: 9292
+
   oslo_db:
     auth:
       admin:
         username: root
         password: password
-      ironic:
-        username: ironic
-        password: password
+        secret:
+          tls:
+            internal: mariadb-tls-direct
     hosts:
-      default: mariadb
+      default: mariadb-cluster-primary
     host_fqdn_override:
       default: null
     path: /ironic
@@ -495,12 +510,16 @@ endpoints:
       admin:
         username: rabbitmq
         password: password
+        secret:
+          tls:
+            internal: rabbitmq-tls-direct
       ironic:
         username: ironic
-        password: password
+        password: password            
+
     statefulset:
-      replicas: 2
-      name: rabbitmq-rabbitmq
+      replicas: 3
+      name: rabbitmq-server
     hosts:
       default: rabbitmq
     host_fqdn_override:
@@ -527,6 +546,9 @@ endpoints:
       api:
         default: 9696
         public: 80
+        internal: 9696
+        service: 9696      
+
   object_store:
     name: swift
     namespace: ceph
@@ -559,6 +581,29 @@ endpoints:
         default: 24224
       metrics:
         default: 24220
+  kube_dns:
+    namespace: kube-system
+    name: kubernetes-dns
+    hosts:
+      default: kube-dns
+    host_fqdn_override:
+      default: null
+    path:
+      default: null
+    scheme: http
+    port:
+      dns:
+        default: 53
+        protocol: UDP
+  ingress:
+    namespace: null
+    name: ingress
+    hosts:
+      default: ingress
+    port:
+      ingress:
+        default: 80
+
 
 pod:
   affinity:
@@ -711,6 +756,19 @@ network_policy:
     egress:
       - {}
 
+
+helm3_hook: true
+
+health_probe:
+  logging:
+    level: ERROR
+
+tls:
+  identity: false
+  oslo_messaging: false
+  oslo_db: false
+
+
 manifests:
   configmap_bin: true
   configmap_etc: true
@@ -718,14 +776,14 @@ manifests:
   ingress_api: true
   job_bootstrap: true
   job_db_drop: false
-  job_db_init: true
+  job_db_init: false
   job_db_sync: true
   job_image_repo_sync: true
   job_ks_endpoints: true
   job_ks_service: true
   job_ks_user: true
   job_manage_cleaning_network: true
-  job_rabbit_init: true
+  job_rabbit_init: false
   pdb_api: true
   network_policy: false
   secret_db: true
