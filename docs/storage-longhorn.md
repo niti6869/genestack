@@ -77,15 +77,12 @@ Replace `${NODE_NAME}` with the name of your node. If you have multiple storage 
 Before deploying Longhorn, it’s best practice to customize the chart’s values to suit your environment. One of the most common customizations is telling Longhorn where to run
 its services and components—in this case, on nodes that have the label `longhorn.io/storage-node=enabled`.
 
-1. Create the override file at `/etc/genestack/manifests/longhorn.yaml`.
+1. Create the override file at `/etc/genestack/helm-configs/longhorn.yaml`.
 2. Copy the following YAML content into that file. (Adapt as needed.)
 
 !!! example "longhorn.yaml"
 
     ``` yaml
-    longhornManager:
-      nodeSelector:
-        longhorn.io/storage-node: "enabled"
     longhornDriver:
       nodeSelector:
         longhorn.io/storage-node: "enabled"
@@ -135,22 +132,23 @@ kubectl label --overwrite namespace longhorn-system \
 
 With your values file in place, you can now deploy Longhorn using the `helm upgrade --install` command. This command will install Longhorn if it is not
 installed yet, or upgrade it if an older version is already present. The `--create-namespace` flag ensures the namespace is created if it does not exist.
+The --set persistence.defaultClass=false ensures that the lognhorn storage class is not set as the default.
 
 ``` shell
 helm upgrade --install longhorn longhorn/longhorn \
              --namespace longhorn-system \
              --create-namespace \
-             --version 1.7.2 \
-             -f /etc/genestack/manifests/longhorn.yaml
+             --set persistence.defaultClass=false \
+             -f /etc/genestack/helm-configs/longhorn.yaml
 ```
 
-!!! note "Breaking this down"
+!!! note "Common helm upgrade arguments"
 
     - **`upgrade --install`**: Installs or upgrades your release.
     - **`--namespace longhorn-system`**: Puts all the Longhorn resources into the `longhorn-system` namespace.
     - **`--create-namespace`**: Creates the namespace if it does not exist already.
-    - **`--version 1.7.2`**: Installs a specific version (1.7.2).
-    - **`-f /etc/genestack/manifests/longhorn.yaml`**: Applies your custom values file.
+    - **`--version 1.8.0`**: Installs a specific version (1.8.0).
+    - **`-f /etc/genestack/helm-configs/longhorn.yaml`**: Applies your custom values file.
 
 ## Validate the Deployment
 
