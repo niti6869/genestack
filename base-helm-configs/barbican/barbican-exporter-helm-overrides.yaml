@@ -1,31 +1,3 @@
----
-# Helm overrides for deploying/promoting the Barbican exporter alongside Barbican
-# Mirrors patterns used by other exporters in genestack.
-
-# Image for the exporter
-image:
-  repository: quay.io/rackspace/barbican-exporter
-  tag: latest
-  pullPolicy: IfNotPresent
-
-# ServiceMonitor configuration used by kube-prometheus-stack
-serviceMonitor:
-  enabled: true
-  interval: 30s
-  scrapeTimeout: 10s
-  namespace: prometheus
-  labels: {}
-
-# Pod placement
-nodeSelector:
-  openstack-control-plane: enabled
-
-# Additional environment variables passed to the exporter
-# The exporter is expected to talk to the Barbican API
-env:
-  - name: BARBICAN_API_URL
-    value: "http://barbican-api.openstack.svc.cluster.local:9311"
-
-# Optional extra args to exporter
-extraArgs: []
-
+## Moved to base-helm-configs/barbican-exporter/barbican-exporter-helm-overrides.yaml
+## This file intentionally left to avoid breaking references; it now includes the other file.
+{{- include (print $.Template.BasePath "/../barbican-exporter/barbican-exporter-helm-overrides.yaml") . | nindent 0 }}

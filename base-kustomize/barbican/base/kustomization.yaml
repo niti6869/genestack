@@ -7,6 +7,3 @@ resources:
   - all.yaml
   - hpa-barbican-api.yaml
   - policies.yaml
-  - barbican-exporter-deployment.yaml
-  - barbican-exporter-service.yaml
-  - barbican-exporter-servicemonitor.yaml
