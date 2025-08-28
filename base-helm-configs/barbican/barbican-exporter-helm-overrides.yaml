@@ -1,3 +1,0 @@
-## Moved to base-helm-configs/barbican-exporter/barbican-exporter-helm-overrides.yaml
-## This file intentionally left to avoid breaking references; it now includes the other file.
-{{- include (print $.Template.BasePath "/../barbican-exporter/barbican-exporter-helm-overrides.yaml") . | nindent 0 }}
