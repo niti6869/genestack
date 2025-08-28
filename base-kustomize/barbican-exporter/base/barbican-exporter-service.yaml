@@ -16,4 +16,3 @@ spec:
       port: 9100
       targetPort: metrics
       protocol: TCP
-

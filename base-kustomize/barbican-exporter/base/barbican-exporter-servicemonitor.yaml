@@ -17,4 +17,3 @@ spec:
     matchLabels:
       app.kubernetes.io/name: barbican-exporter
       app.kubernetes.io/instance: barbican-exporter
-
