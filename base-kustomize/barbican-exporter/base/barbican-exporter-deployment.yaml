@@ -26,6 +26,46 @@ spec:
           image: quay.io/rackspace/barbican-exporter:latest
           imagePullPolicy: IfNotPresent
           env:
+            - name: OS_AUTH_URL
+              valueFrom:
+                secretKeyRef:
+                  name: keystone-keystone-admin
+                  key: OS_AUTH_URL
+            - name: OS_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: keystone-keystone-admin
+                  key: OS_USERNAME
+            - name: OS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: keystone-keystone-admin
+                  key: OS_PASSWORD
+            - name: OS_PROJECT_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: keystone-keystone-admin
+                  key: OS_PROJECT_NAME
+            - name: OS_PROJECT_DOMAIN_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: keystone-keystone-admin
+                  key: OS_PROJECT_DOMAIN_NAME
+            - name: OS_USER_DOMAIN_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: keystone-keystone-admin
+                  key: OS_USER_DOMAIN_NAME
+            - name: OS_REGION_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: keystone-keystone-admin
+                  key: OS_REGION_NAME
+            - name: OS_INTERFACE
+              valueFrom:
+                secretKeyRef:
+                  name: keystone-keystone-admin
+                  key: OS_INTERFACE
             - name: BARBICAN_API_URL
               value: "http://barbican-api.openstack.svc.cluster.local:9311"
           ports:
