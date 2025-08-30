@@ -1,0 +1,10 @@
+---
+sortOptions:
+  order: fifo
+resources:
+  - blazar-mariadb-database.yaml
+  - blazar-rabbitmq-queue.yaml
+  - all.yaml
+  - hpa-blazar-api.yaml
+  - policies.yaml
+

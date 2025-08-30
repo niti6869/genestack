@@ -78,6 +78,9 @@ octavia_certificates_password=$(generate_password 32)
 barbican_rabbitmq_password=$(generate_password 64)
 barbican_db_password=$(generate_password 32)
 barbican_admin_password=$(generate_password 32)
+blazar_rabbitmq_password=$(generate_password 64)
+blazar_db_password=$(generate_password 32)
+blazar_admin_password=$(generate_password 32)
 magnum_rabbitmq_password=$(generate_password 64)
 magnum_db_password=$(generate_password 32)
 magnum_admin_password=$(generate_password 32)
@@ -490,6 +493,34 @@ metadata:
 type: Opaque
 data:
   password: $(echo -n $barbican_admin_password | base64 -w0)
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: blazar-rabbitmq-password
+  namespace: openstack
+type: Opaque
+data:
+  username: $(echo -n "blazar" | base64)
+  password: $(echo -n $blazar_rabbitmq_password | base64 -w0)
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: blazar-db-password
+  namespace: openstack
+type: Opaque
+data:
+  password: $(echo -n $blazar_db_password | base64 -w0)
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: blazar-admin
+  namespace: openstack
+type: Opaque
+data:
+  password: $(echo -n $blazar_admin_password | base64 -w0)
 ---
 apiVersion: v1
 kind: Secret
