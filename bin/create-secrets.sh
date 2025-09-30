@@ -53,6 +53,9 @@ heat_stack_user_password=$(generate_password 32)
 cinder_rabbitmq_password=$(generate_password 64)
 cinder_db_password=$(generate_password 32)
 cinder_admin_password=$(generate_password 32)
+cloudkitty_rabbitmq_password=$(generate_password 64)
+cloudkitty_db_password=$(generate_password 32)
+cloudkitty_admin_password=$(generate_password 32)
 metadata_shared_secret_password=$(generate_password 32)
 placement_db_password=$(generate_password 32)
 placement_admin_password=$(generate_password 32)
@@ -103,6 +106,9 @@ blazar_rabbitmq_password=$(generate_password 64)
 blazar_db_password=$(generate_password 32)
 blazar_admin_password=$(generate_password 32)
 blazar_keystone_test_password=$(generate_password 32)
+freezer_db_password=$(generate_password 32)
+freezer_admin_password=$(generate_password 32)
+freezer_keystone_test_password=$(generate_password 32)
 
 OUTPUT_FILE="/etc/genestack/kubesecrets.yaml"
 
@@ -264,6 +270,34 @@ metadata:
 type: Opaque
 data:
   password: $(echo -n $cinder_admin_password | base64 -w0)
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cloudkitty-rabbitmq-password
+  namespace: openstack
+type: Opaque
+data:
+  username: $(echo -n "cloudkitty" | base64)
+  password: $(echo -n $cloudkitty_rabbitmq_password | base64 -w0)
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cloudkitty-db-password
+  namespace: openstack
+type: Opaque
+data:
+  password: $(echo -n $cloudkitty_db_password | base64 -w0)
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cloudkitty-admin
+  namespace: openstack
+type: Opaque
+data:
+  password: $(echo -n $cloudkitty_admin_password | base64 -w0)
 ---
 apiVersion: v1
 kind: Secret
@@ -731,6 +765,47 @@ metadata:
 type: Opaque
 data:
   password: $(echo -n $blazar_keystone_test_password | base64 -w0)
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: freezer-db-password
+  namespace: openstack
+type: Opaque
+data:
+  password: $(echo -n $freezer_db_password | base64 -w0)
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: freezer-admin
+  namespace: openstack
+type: Opaque
+data:
+  password: $(echo -n $freezer_admin_password | base64 -w0)
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: freezer-keystone-test-password
+  namespace: openstack
+type: Opaque
+data:
+  password: $(echo -n $freezer_keystone_test_password | base64 -w0)
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: keystone-auth-openstack-exporter
+  namespace: prometheus
+type: Opaque
+data:
+  AUTH_URL: $(echo -n $keystone_auth_url | base64 -w0)
+  USERNAME: $(echo -n $keystone_username | base64 -w0)
+  PASSWORD: $(kubectl get secret keystone-admin -n openstack -o jsonpath={.data.password})
+  USER_DOMAIN_NAME: $(echo -n $keystone_user_domain | base64 -w0)
+  PROJECT_NAME: $(echo -n $keystone_project_name | base64 -w0)
+  PROJECT_DOMAIN_NAME: $(echo -n $keystone_project_domain | base64 -w0)
 EOF
 
 rm nova_ssh_key nova_ssh_key.pub

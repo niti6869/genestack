@@ -30,7 +30,9 @@ components:
   heat: false
   barbican: false
   blazar: false
+  cloudkitty: false
   cinder: true
+  freezer: false
   placement: true
   nova: true
   neutron: true
@@ -656,7 +658,7 @@ conf:
 EOF
 fi
 
-if [ ! -f "/etc/genestack/helm-configs/magnum/magnum-helm-overrides.yaml" ]; then
+if [ ! -f "/etc/genestack/helm-configs/neutron/neutron-helm-overrides.yaml" ]; then
 cat > /etc/genestack/helm-configs/neutron/neutron-helm-overrides.yaml <<EOF
 ---
 pod:
@@ -748,6 +750,36 @@ conf:
     oslo_messaging_notifications:
       driver: noop
   placement_api_uwsgi:
+    uwsgi:
+      processes: 1
+      threads: 1
+EOF
+fi
+
+if [ ! -f "/etc/genestack/helm-configs/masakari/masakari-helm-overrides.yaml" ]; then
+cat > /etc/genestack/helm-configs/masakari/masakari-helm-overrides.yaml <<EOF
+---
+pod:
+  resources:
+    enabled: false
+conf:
+  masakari:
+    oslo_messaging_notifications:
+      driver: noop
+EOF
+fi
+
+if [ ! -f "/etc/genestack/helm-configs/cloudkitty/cloudkitty-helm-overrides.yaml" ]; then
+cat > /etc/genestack/helm-configs/cloudkitty/cloudkitty-helm-overrides.yaml <<EOF
+---
+pod:
+  resources:
+    enabled: false
+conf:
+  cloudkitty:
+    oslo_messaging_notifications:
+      driver: noop
+  cloudkitty_api_uwsgi:
     uwsgi:
       processes: 1
       threads: 1
@@ -874,9 +906,41 @@ endpoints:
         public: 443
     scheme:
       public: https
+  backup:
+    host_fqdn_override:
+      public:
+        tls: {}
+        host: freezer.${GATEWAY_DOMAIN}
+    port:
+      api:
+        public: 443
+    scheme:
+      public: https
+  rating:
+    host_fqdn_override:
+      public:
+        tls: {}
+        host: cloudkitty.${GATEWAY_DOMAIN}
+    port:
+      api:
+        public: 443
+    scheme:
+      public: https
+  instance_ha:
+    host_fqdn_override:
+      public:
+        tls: {}
+        host: masakari.${GATEWAY_DOMAIN}
+    port:
+      api:
+        public: 443
+    scheme:
+      public: https
   identity:
     auth:
       admin:
+        region_name: *region
+      test:
         region_name: *region
       barbican:
         region_name: *region
@@ -885,6 +949,8 @@ endpoints:
       cinder:
         region_name: *region
       ceilometer:
+        region_name: *region
+      cloudkitty:
         region_name: *region
       glance:
         region_name: *region
@@ -900,6 +966,8 @@ endpoints:
         region_name: *region
       magnum:
         region_name: *region
+      masakari:
+        region_name: *region
       neutron:
         region_name: *region
       nova:
@@ -907,6 +975,8 @@ endpoints:
       placement:
         region_name: *region
       octavia:
+        region_name: *region
+      freezer:
         region_name: *region
     host_fqdn_override:
       public:
@@ -1119,7 +1189,8 @@ set -e
 
 if [ ! -f ~/.config/openstack ]; then
   sudo mkdir -p ~/.config/openstack
-  sudo cp -r /root/.config/openstack ~/.config/openstack
+  sudo cp /root/.config/openstack/clouds.yaml ~/.config/openstack
+  sudo chown $(id -u):$(id -g) ~/.config
 fi
 
 source ~/.venvs/genestack/bin/activate
