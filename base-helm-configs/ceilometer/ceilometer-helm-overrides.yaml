@@ -813,82 +813,82 @@ conf:
         type:
           fields: payload.type
   # Blazar events and metrics
-  - event_type:
-      [
-        "blazar.lease.create",
-        "blazar.lease.update",
-        "blazar.lease.delete",
-        "blazar.lease.start",
-        "blazar.lease.end",
-        "start_lease",
-        "end_lease",
-        "before_end_lease",
-      ]
-    traits: &blazar_lease_traits
-      lease_id:
-        fields: [payload.lease_id, payload.id]
-      resource_id:
-        fields: [payload.lease_id, payload.id]
-      name:
-        fields: payload.name
-      project_id:
-        fields: [payload.project_id, payload.tenant_id]
-      user_id:
-        fields: payload.user_id
-      start_date:
-        type: datetime
-        fields: payload.start_date
-      end_date:
-        type: datetime
-        fields: payload.end_date
-      event_time:
-        type: datetime
-        fields: payload.time
-      status:
-        fields: payload.status
+    - event_type:
+        [
+          "blazar.lease.create",
+          "blazar.lease.update",
+          "blazar.lease.delete",
+          "blazar.lease.start",
+          "blazar.lease.end",
+          "start_lease",
+          "end_lease",
+          "before_end_lease",
+        ]
+      traits: &blazar_lease_traits
+        lease_id:
+          fields: [payload.lease_id, payload.id]
+        resource_id:
+          fields: [payload.lease_id, payload.id]
+        name:
+          fields: payload.name
+        project_id:
+          fields: [payload.project_id, payload.tenant_id]
+        user_id:
+          fields: payload.user_id
+        start_date:
+          type: datetime
+          fields: payload.start_date
+        end_date:
+          type: datetime
+          fields: payload.end_date
+        event_time:
+          type: datetime
+          fields: payload.time
+        status:
+          fields: payload.status
 
-  - event_type:
-      [
-        "blazar.reservation.create",
-        "blazar.reservation.update",
-        "blazar.reservation.delete",
-        "blazar.reservation.instance.*",
-        "blazar.reservation.flavor.*",
-        "blazar.reservation.floatingip.*",
-      ]
-    traits: &blazar_reservation_traits
-      reservation_id:
-        fields: [payload.reservation_id, payload.id]
-      lease_id:
-        fields: [payload.lease_id, payload.lease.id]
-      resource_id:
-        fields: [payload.lease_id, payload.lease.id]
-      resource_type:
-        fields: payload.resource_type
-      amount:
-        type: int
-        fields: payload.amount
-      vcpus:
-        type: int
-        fields: payload.vcpus
-      memory_mb:
-        type: int
-        fields: payload.memory_mb
-      disk_gb:
-        type: int
-        fields: payload.disk_gb
-      min:
-        type: int
-        fields: payload.min
-      max:
-        type: int
-        fields: payload.max
-      flavor_id:
-        fields: payload.flavor_id
-      network_id:
-        fields: payload.network_id
-      required_floatingips:
-        fields: payload.required_floatingips
+    - event_type:
+        [
+          "blazar.reservation.create",
+          "blazar.reservation.update",
+          "blazar.reservation.delete",
+          "blazar.reservation.instance.*",
+          "blazar.reservation.flavor.*",
+          "blazar.reservation.floatingip.*",
+        ]
+      traits: &blazar_reservation_traits
+        reservation_id:
+          fields: [payload.reservation_id, payload.id]
+        lease_id:
+          fields: [payload.lease_id, payload.lease.id]
+        resource_id:
+          fields: [payload.lease_id, payload.lease.id]
+        resource_type:
+          fields: payload.resource_type
+        amount:
+          type: int
+          fields: payload.amount
+        vcpus:
+          type: int
+          fields: payload.vcpus
+        memory_mb:
+          type: int
+          fields: payload.memory_mb
+        disk_gb:
+          type: int
+          fields: payload.disk_gb
+        min:
+          type: int
+          fields: payload.min
+        max:
+          type: int
+          fields: payload.max
+        flavor_id:
+          fields: payload.flavor_id
+        network_id:
+          fields: payload.network_id
+        required_floatingips:
+          fields: payload.required_floatingips
 
   gnocchi_resources:
     archive_policy_default: ceilometer-low
