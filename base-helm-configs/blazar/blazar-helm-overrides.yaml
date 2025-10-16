@@ -53,6 +53,10 @@ conf:
   blazar:
     DEFAULT:
       host_href: "http://blazar-api.openstack.svc.cluster.local:1234"
+    oslo_messaging_notifications:
+      driver: messagingv2
+      topics:
+        - notifications
     database:
       connection_debug: 0
       connection_recycle_time: 600

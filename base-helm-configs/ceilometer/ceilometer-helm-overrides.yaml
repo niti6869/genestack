@@ -60,6 +60,7 @@ conf:
           - rabbit://rabbitmq:password@rabbitmq.openstack.svc.cluster.local:5672/neutron
           - rabbit://rabbitmq:password@rabbitmq.openstack.svc.cluster.local:5672/heat
           - rabbit://rabbitmq:password@rabbitmq.openstack.svc.cluster.local:5672/swift
+          - rabbit://rabbitmq:password@rabbitmq.openstack.svc.cluster.local:5672/blazar
     oslo_messaging_notifications:
       driver: messagingv2
       topics:
@@ -159,6 +160,31 @@ conf:
           type: datetime
           fields: payload.audit_period_ending
     - event_type:
+        [
+          "reservation.lease.create.*",
+          "reservation.lease.update.*",
+          "reservation.lease.delete.*",
+          "blazar.lease.create.*",
+          "blazar.lease.update.*",
+          "blazar.lease.delete.*",
+        ]
+      traits: &blazar_lease_traits
+        resource_id:
+          fields: payload.lease_id
+        lease_name:
+          fields: payload.name
+        project_id:
+          fields: payload.project_id
+        user_id:
+          fields: payload.user_id
+        start_date:
+          type: datetime
+          fields: payload.start_date
+        end_date:
+          type: datetime
+          fields: payload.end_date
+        status:
+          fields: payload.status
         [
           "volume.exists",
           "volume.retype",
@@ -856,6 +882,28 @@ conf:
             timespan: 365 days
 
     resources:
+      - resource_type: blazar_lease
+        metrics:
+          reservation.lease.create:
+          reservation.lease.update:
+          reservation.lease.delete:
+          blazar.lease.create:
+          blazar.lease.update:
+          blazar.lease.delete:
+        attributes:
+          project_id: resource_metadata.project_id
+          user_id: resource_metadata.user_id
+          name: resource_metadata.lease_name
+          start_date: resource_metadata.start_date
+          end_date: resource_metadata.end_date
+        event_create:
+          - blazar.lease.create.end
+        event_delete:
+          - blazar.lease.delete.end
+        event_update:
+          - blazar.lease.update.end
+        event_attributes:
+          id: resource_id
       - resource_type: identity
         metrics:
           identity.authenticate.success:
@@ -1663,6 +1711,49 @@ conf:
           status: $.payload.status
           availability_zone: $.payload.availability_zone
           protocol: $.payload.proto
+
+      # Blazar
+      - name: "blazar.lease.create"
+        event_type: ["reservation.lease.create.*", "blazar.lease.create.*"]
+        type: "delta"
+        unit: "lease"
+        volume: 1
+        project_id: $.payload.project_id
+        user_id: $.payload.user_id
+        resource_id: $.payload.lease_id
+        metadata:
+          lease_name: $.payload.name
+          start_date: $.payload.start_date
+          end_date: $.payload.end_date
+          status: $.payload.status
+
+      - name: "blazar.lease.update"
+        event_type: ["reservation.lease.update.*", "blazar.lease.update.*"]
+        type: "delta"
+        unit: "lease"
+        volume: 1
+        project_id: $.payload.project_id
+        user_id: $.payload.user_id
+        resource_id: $.payload.lease_id
+        metadata:
+          lease_name: $.payload.name
+          start_date: $.payload.start_date
+          end_date: $.payload.end_date
+          status: $.payload.status
+
+      - name: "blazar.lease.delete"
+        event_type: ["reservation.lease.delete.*", "blazar.lease.delete.*"]
+        type: "delta"
+        unit: "lease"
+        volume: 1
+        project_id: $.payload.project_id
+        user_id: $.payload.user_id
+        resource_id: $.payload.lease_id
+        metadata:
+          lease_name: $.payload.name
+          start_date: $.payload.start_date
+          end_date: $.payload.end_date
+          status: $.payload.status
 
   polling:
     sources:
