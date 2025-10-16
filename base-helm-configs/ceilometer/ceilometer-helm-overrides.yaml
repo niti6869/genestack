@@ -195,18 +195,16 @@ conf:
         instance_id:
           fields: payload.volume_attachment[0].instance_uuid
     - event_type:
-        [
-          "volume.transfer.*",
-          "volume.exists",
-          "volume.retype",
-          "volume.create.*",
-          "volume.delete.*",
-          "volume.resize.*",
-          "volume.attach.*",
-          "volume.detach.*",
-          "volume.update.*",
-          "snapshot.transfer.accept.end",
-        ]
+        - "volume.transfer.*"
+        - "volume.exists"
+        - "volume.retype"
+        - "volume.create.*"
+        - "volume.delete.*"
+        - "volume.resize.*"
+        - "volume.attach.*"
+        - "volume.detach.*"
+        - "volume.update.*"
+        - "snapshot.transfer.accept.end"
       traits:
         <<: *cinder_traits
         resource_id:
@@ -842,18 +840,16 @@ conf:
           fields: payload.detail
         type:
           fields: payload.type
-  # Blazar events and metrics
+    # Blazar events and metrics
     - event_type:
-        [
-          "blazar.lease.create",
-          "blazar.lease.update",
-          "blazar.lease.delete",
-          "blazar.lease.start",
-          "blazar.lease.end",
-          "start_lease",
-          "end_lease",
-          "before_end_lease",
-        ]
+        - "blazar.lease.create"
+        - "blazar.lease.update"
+        - "blazar.lease.delete"
+        - "blazar.lease.start"
+        - "blazar.lease.end"
+        - "start_lease"
+        - "end_lease"
+        - "before_end_lease"
       traits: &blazar_lease_traits
         lease_id:
           fields:
@@ -884,14 +880,12 @@ conf:
           fields: payload.status
 
     - event_type:
-        [
-          "blazar.reservation.create",
-          "blazar.reservation.update",
-          "blazar.reservation.delete",
-          "blazar.reservation.instance.*",
-          "blazar.reservation.flavor.*",
-          "blazar.reservation.floatingip.*",
-        ]
+        - "blazar.reservation.create"
+        - "blazar.reservation.update"
+        - "blazar.reservation.delete"
+        - "blazar.reservation.instance.*"
+        - "blazar.reservation.flavor.*"
+        - "blazar.reservation.floatingip.*"
       traits: &blazar_reservation_traits
         reservation_id:
           fields:
@@ -1898,7 +1892,8 @@ conf:
         unit: "s"
         volume:
           fields:
-            [$.payload.audit_period_beginning, $.payload.audit_period_ending]
+            - $.payload.audit_period_beginning
+            - $.payload.audit_period_ending
           plugin: "timedelta"
         project_id: $.payload.tenant_id
         resource_id: $.payload.id
@@ -1915,7 +1910,8 @@ conf:
         unit: "s"
         volume:
           fields:
-            [$.payload.audit_period_beginning, $.payload.audit_period_ending]
+            - $.payload.audit_period_beginning
+            - $.payload.audit_period_ending
           plugin: "timedelta"
         project_id: $.payload.tenant_id
         resource_id: $.payload.instance_id
