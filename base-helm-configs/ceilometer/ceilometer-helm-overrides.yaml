@@ -161,6 +161,9 @@ conf:
           fields: payload.audit_period_ending
     - event_type:
         [
+          "reservation.lease.create.*",
+          "reservation.lease.update.*",
+          "reservation.lease.delete.*",
           "blazar.lease.create.*",
           "blazar.lease.update.*",
           "blazar.lease.delete.*",
@@ -881,6 +884,9 @@ conf:
     resources:
       - resource_type: blazar_lease
         metrics:
+          reservation.lease.create:
+          reservation.lease.update:
+          reservation.lease.delete:
           blazar.lease.create:
           blazar.lease.update:
           blazar.lease.delete:
@@ -1708,7 +1714,7 @@ conf:
 
       # Blazar
       - name: "blazar.lease.create"
-        event_type: "blazar.lease.create.end"
+        event_type: ["reservation.lease.create.*", "blazar.lease.create.*"]
         type: "delta"
         unit: "lease"
         volume: 1
@@ -1722,7 +1728,7 @@ conf:
           status: $.payload.status
 
       - name: "blazar.lease.update"
-        event_type: "blazar.lease.update.end"
+        event_type: ["reservation.lease.update.*", "blazar.lease.update.*"]
         type: "delta"
         unit: "lease"
         volume: 1
@@ -1736,7 +1742,7 @@ conf:
           status: $.payload.status
 
       - name: "blazar.lease.delete"
-        event_type: "blazar.lease.delete.end"
+        event_type: ["reservation.lease.delete.*", "blazar.lease.delete.*"]
         type: "delta"
         unit: "lease"
         volume: 1
