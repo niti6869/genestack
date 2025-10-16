@@ -160,22 +160,20 @@ conf:
           type: datetime
           fields: payload.audit_period_ending
     - event_type:
-        [
-          "volume.exists",
-          "volume.retype",
-          "volume.create.*",
-          "volume.delete.*",
-          "volume.resize.*",
-          "volume.attach.*",
-          "volume.detach.*",
-          "volume.update.*",
-          "snapshot.exists",
-          "snapshot.create.*",
-          "snapshot.delete.*",
-          "snapshot.update.*",
-          "volume.transfer.accept.end",
-          "snapshot.transfer.accept.end",
-        ]
+        - "volume.exists"
+        - "volume.retype"
+        - "volume.create.*"
+        - "volume.delete.*"
+        - "volume.resize.*"
+        - "volume.attach.*"
+        - "volume.detach.*"
+        - "volume.update.*"
+        - "snapshot.exists"
+        - "snapshot.create.*"
+        - "snapshot.delete.*"
+        - "snapshot.update.*"
+        - "volume.transfer.accept.end"
+        - "snapshot.transfer.accept.end"
       traits: &cinder_traits
         user_id:
           fields: payload.user_id
@@ -720,12 +718,14 @@ conf:
           fields: payload.nova_volume_id
     - event_type: trove.instance.create
       traits:
-        <<: *trove_base_traits
-        <<: *trove_common_traits
+        <<:
+          - *trove_base_traits
+          - *trove_common_traits
     - event_type: trove.instance.modify_volume
       traits:
-        <<: *trove_base_traits
-        <<: *trove_common_traits
+        <<:
+          - *trove_base_traits
+          - *trove_common_traits
         old_volume_size:
           type: int
           fields: payload.old_volume_size
@@ -734,8 +734,9 @@ conf:
           fields: payload.modify_at
     - event_type: trove.instance.modify_flavor
       traits:
-        <<: *trove_base_traits
-        <<: *trove_common_traits
+        <<:
+          - *trove_base_traits
+          - *trove_common_traits
         old_instance_size:
           type: int
           fields: payload.old_instance_size
@@ -744,8 +745,9 @@ conf:
           fields: payload.modify_at
     - event_type: trove.instance.delete
       traits:
-        <<: *trove_base_traits
-        <<: *trove_common_traits
+        <<:
+          - *trove_base_traits
+          - *trove_common_traits
         deleted_at:
           type: datetime
           fields: payload.deleted_at
