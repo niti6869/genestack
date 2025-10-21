@@ -60,6 +60,7 @@ conf:
           - rabbit://rabbitmq:password@rabbitmq.openstack.svc.cluster.local:5672/neutron
           - rabbit://rabbitmq:password@rabbitmq.openstack.svc.cluster.local:5672/heat
           - rabbit://rabbitmq:password@rabbitmq.openstack.svc.cluster.local:5672/swift
+          - rabbit://rabbitmq:password@rabbitmq.openstack.svc.cluster.local:5672/blazar
     oslo_messaging_notifications:
       driver: messagingv2
       topics:
@@ -811,6 +812,30 @@ conf:
           fields: payload.detail
         type:
           fields: payload.type
+    - event_type: "lease.*"
+      traits: &blazar_lease_traits
+        user_id:
+          fields: payload.user_id
+        project_id:
+          fields: payload.project_id
+        resource_id:
+          fields: payload.lease_id
+        name:
+          fields: payload.name
+        status:
+          fields: payload.status
+        start_date:
+          type: datetime
+          fields: payload.start_date
+        end_date:
+          type: datetime
+          fields: payload.end_date
+        created_at:
+          type: datetime
+          fields: payload.created_at
+        updated_at:
+          type: datetime
+          fields: payload.updated_at
   gnocchi_resources:
     archive_policy_default: ceilometer-low
     archive_policies:
@@ -1213,6 +1238,36 @@ conf:
         attributes:
           controller: resource_metadata.controller
           switch: resource_metadata.switch
+
+      - resource_type: blazar_lease
+        metrics:
+          lease.duration:
+            archive_policy_name: ceilometer-low
+          lease.active:
+            archive_policy_name: ceilometer-low
+        attributes:
+          name: resource_metadata.name
+          status: resource_metadata.status
+          start_date: resource_metadata.start_date
+          end_date: resource_metadata.end_date
+          created_at: resource_metadata.created_at
+          updated_at: resource_metadata.updated_at
+        event_create:
+          - lease.create
+        event_delete:
+          - lease.delete
+        event_update:
+          - lease.update
+          - lease.start
+          - lease.end
+        event_attributes:
+          id: resource_id
+          project_id: project_id
+          user_id: user_id
+          name: name
+          status: status
+          start_date: start_date
+          end_date: end_date
 
   meters:
     metric:
@@ -1663,6 +1718,43 @@ conf:
           status: $.payload.status
           availability_zone: $.payload.availability_zone
           protocol: $.payload.proto
+
+      # Blazar Lease
+      - name: "lease.duration"
+        event_type:
+          - "lease.create"
+          - "lease.update"
+          - "lease.start"
+          - "lease.end"
+        type: "gauge"
+        unit: "s"
+        volume:
+          fields: [$.payload.start_date, $.payload.end_date]
+          plugin: "timedelta"
+        resource_id: $.payload.lease_id
+        project_id: $.payload.project_id
+        user_id: $.payload.user_id
+        metadata:
+          name: $.payload.name
+          status: $.payload.status
+
+      - name: "lease.active"
+        event_type:
+          - "lease.create"
+          - "lease.start"
+          - "lease.end"
+          - "lease.delete"
+        type: "gauge"
+        unit: "lease"
+        volume: 1
+        resource_id: $.payload.lease_id
+        project_id: $.payload.project_id
+        user_id: $.payload.user_id
+        metadata:
+          name: $.payload.name
+          status: $.payload.status
+          start_date: $.payload.start_date
+          end_date: $.payload.end_date
 
   polling:
     sources:
