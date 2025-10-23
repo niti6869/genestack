@@ -956,10 +956,10 @@ conf:
           blazar.reservation.flavor.amount:
           blazar.reservation.fip.amount:
         attributes:
+          id: resource_metadata.lease_id
           name: resource_metadata.name
           start_date: resource_metadata.start_date
           end_date: resource_metadata.end_date
-          lease_id: resource_metadata.lease_id
         event_create:
           - start_lease
           - blazar.lease.create
@@ -979,10 +979,10 @@ conf:
           - blazar.lease.delete
           - lease.delete
         event_attributes:
+          id: lease_id
           name: name
           start_date: start_date
           end_date: end_date
-          lease_id: lease_id
       - resource_type: identity
         metrics:
           identity.authenticate.success:
