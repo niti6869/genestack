@@ -966,6 +966,7 @@ conf:
           - blazar.lease.start
           - lease.create
           - lease.start
+          - lease.event.start_lease
         event_update:
           - blazar.lease.update
           - blazar.lease.end
@@ -973,6 +974,7 @@ conf:
           - before_end_lease
           - lease.update
           - lease.end
+          - lease.event.before_end_lease
         event_delete:
           - blazar.lease.delete
           - lease.delete
@@ -1382,6 +1384,12 @@ conf:
           - "blazar.lease.end"
           - "lease.end"
           - "end_lease"
+        type: "delta"
+        unit: "lease"
+        volume: 1
+        project_id: $.payload.project_id
+        user_id: $.payload.user_id
+        resource_id: $.payload.lease_id
       - name: "blazar.lease.delete"
         event_type:
           - "blazar.lease.delete"
