@@ -959,6 +959,7 @@ conf:
           name: resource_metadata.name
           start_date: resource_metadata.start_date
           end_date: resource_metadata.end_date
+          lease_id: resource_metadata.lease_id
         event_create:
           - start_lease
           - blazar.lease.create
@@ -980,9 +981,6 @@ conf:
           start_date: start_date
           end_date: end_date
           lease_id: lease_id
-          project_id: project_id
-          user_id: user_id
-          status: status
       - resource_type: identity
         metrics:
           identity.authenticate.success:
