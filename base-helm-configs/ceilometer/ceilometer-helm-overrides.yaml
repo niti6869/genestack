@@ -1361,6 +1361,7 @@ conf:
           - "blazar.lease.start"
           - "lease.start"
           - "start_lease"
+          - "lease.event.start_lease"
         type: "delta"
         unit: "lease"
         volume: 1
@@ -1384,6 +1385,7 @@ conf:
           - "blazar.lease.end"
           - "lease.end"
           - "end_lease"
+          - "lease.event.end_lease"
         type: "delta"
         unit: "lease"
         volume: 1
