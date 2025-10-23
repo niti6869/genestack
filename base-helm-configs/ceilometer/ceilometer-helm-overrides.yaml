@@ -827,6 +827,9 @@ conf:
         - "lease.delete"
         - "lease.start"
         - "lease.end"
+        - "lease.event.start_lease"
+        - "lease.event.end_lease"
+        - "lease.event.before_end_lease"
       traits: &blazar_lease_traits
         lease_id:
           fields: [payload.lease_id, payload.id]
@@ -941,6 +944,7 @@ conf:
           blazar.lease.start:
           blazar.lease.before_end:
           blazar.lease.end:
+          blazar.lease.delete:
           blazar.reservation.instance.amount:
           blazar.reservation.instance.vcpus:
           blazar.reservation.instance.memory_mb:
@@ -1369,6 +1373,7 @@ conf:
       - name: "blazar.lease.before_end"
         event_type:
           - "before_end_lease"
+          - "lease.event.before_end_lease"
         type: "delta"
         unit: "lease"
         volume: 1
@@ -1381,6 +1386,11 @@ conf:
           - "blazar.lease.end"
           - "lease.end"
           - "end_lease"
+      - name: "blazar.lease.delete"
+        event_type:
+          - "blazar.lease.delete"
+          - "lease.delete"
+          - "lease.event.delete"
         type: "delta"
         unit: "lease"
         volume: 1
