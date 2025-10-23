@@ -822,6 +822,11 @@ conf:
         - "start_lease"
         - "end_lease"
         - "before_end_lease"
+        - "lease.create"
+        - "lease.update"
+        - "lease.delete"
+        - "lease.start"
+        - "lease.end"
       traits: &blazar_lease_traits
         lease_id:
           fields: [payload.lease_id, payload.id]
@@ -944,17 +949,30 @@ conf:
           blazar.reservation.host.max:
           blazar.reservation.flavor.amount:
           blazar.reservation.fip.amount:
+        attributes:
+          id: resource_metadata.lease_id
+          name: resource_metadata.name
+          project_id: resource_metadata.project_id
+          user_id: resource_metadata.user_id
+          start_date: resource_metadata.start_date
+          end_date: resource_metadata.end_date
+          status: resource_metadata.status
         event_create:
+          - start_lease
           - blazar.lease.create
           - blazar.lease.start
-          - start_lease
+          - lease.create
+          - lease.start
         event_update:
           - blazar.lease.update
           - blazar.lease.end
           - end_lease
           - before_end_lease
+          - lease.update
+          - lease.end
         event_delete:
           - blazar.lease.delete
+          - lease.delete
         event_attributes:
           id: lease_id
           name: name
@@ -1327,6 +1345,8 @@ conf:
       - name: "blazar.lease.create"
         event_type:
           - "blazar.lease.create"
+          - "lease.create"
+          - "start_lease"
         type: "delta"
         unit: "lease"
         volume: 1
@@ -1337,6 +1357,7 @@ conf:
       - name: "blazar.lease.start"
         event_type:
           - "blazar.lease.start"
+          - "lease.start"
           - "start_lease"
         type: "delta"
         unit: "lease"
@@ -1358,6 +1379,7 @@ conf:
       - name: "blazar.lease.end"
         event_type:
           - "blazar.lease.end"
+          - "lease.end"
           - "end_lease"
         type: "delta"
         unit: "lease"
