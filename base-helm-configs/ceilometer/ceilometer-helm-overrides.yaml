@@ -61,6 +61,8 @@ conf:
           - rabbit://rabbitmq:password@rabbitmq.openstack.svc.cluster.local:5672/heat
           - rabbit://rabbitmq:password@rabbitmq.openstack.svc.cluster.local:5672/swift
           - rabbit://rabbitmq:password@rabbitmq.openstack.svc.cluster.local:5672/blazar
+    event:
+      definitions_file: "/etc/ceilometer/event_definitions.yaml"
     oslo_messaging_notifications:
       driver: messagingv2
       topics:
