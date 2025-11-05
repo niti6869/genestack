@@ -1,0 +1,51 @@
+#!/bin/bash
+set -e
+
+echo "Quick fix for resource creation issues..."
+
+echo ""
+echo "CURRENT STATUS:"
+echo "✅ Configuration deployed successfully"
+echo "✅ Events being processed"
+echo "✅ Resource ID mapping working"
+echo "✅ Metrics being created"
+echo "❌ Resource creation failing due to datetime and missing fields"
+
+echo ""
+echo "QUICK FIX:"
+echo "Make the 'name' field optional in the resource type definition"
+
+echo ""
+echo "Step 1: Delete and recreate resource type with optional name"
+echo "============================================================"
+echo ""
+echo "openstack metric resource-type delete blazar_lease"
+echo ""
+echo "openstack metric resource-type create blazar_lease \\"
+echo "  --attribute id:string:true:max_length=255 \\"
+echo "  --attribute name:string:false:max_length=255 \\"
+echo "  --attribute start_date:string:false:max_length=255 \\"
+echo "  --attribute end_date:string:false:max_length=255"
+
+echo ""
+echo "Step 2: Test the fix"
+echo "==================="
+echo ""
+echo "openstack reservation lease create \\"
+echo "  --reservation resource_type=physical:host,min=1,max=1,hypervisor_properties='[\">=\", \"\$vcpus\", \"2\"]' \\"
+echo "  --start-date \"\$(date --date '+1 min' +\"%Y-%m-%d %H:%M\")\" \\"
+echo "  --end-date \"\$(date --date '+20 min' +\"%Y-%m-%d %H:%M\")\" \\"
+echo "  test-lease-quick-fix"
+
+echo ""
+echo "Step 3: Check results"
+echo "===================="
+echo ""
+echo "openstack metric resource list --type blazar_lease"
+echo "openstack metric list | grep -i blazar"
+
+echo ""
+echo "EXPECTED RESULTS:"
+echo "✅ No more 'required key not provided @ data['name']' errors"
+echo "✅ Resources created successfully"
+echo "✅ Integration working end-to-end"
